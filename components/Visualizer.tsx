@@ -138,12 +138,16 @@ const Visualizer: React.FC<VisualizerProps> = ({ config, cabinet, stats }) => {
   return (
     <div className="w-full h-full flex flex-col">
       {/* Main View Area (Front) */}
-      <div className={`flex-1 relative overflow-hidden p-4 flex flex-col ${isCurved ? 'h-1/2 border-b border-gray-800' : 'h-full'}`}>
-        <div className="absolute top-4 right-4 z-10 bg-gray-900/80 backdrop-blur px-3 py-1 rounded text-xs text-gray-400 font-mono border border-gray-700 shadow-sm">
-           VISTA FRONTAL • {config.cols}x{config.rows}
+      <div className={`flex-1 flex flex-col ${isCurved ? 'h-1/2 border-b border-gray-800' : 'h-full'}`}>
+        {/* Header Bar for Front View */}
+        <div className="flex justify-between items-center px-4 py-2 bg-gray-900/30 border-b border-gray-800/50">
+            <span className="text-xs text-gray-500 font-mono font-medium">DIMENSÕES</span>
+            <div className="bg-gray-800/80 px-2 py-0.5 rounded text-[10px] text-gray-400 font-mono border border-gray-700">
+                VISTA FRONTAL • {config.cols}x{config.rows}
+            </div>
         </div>
         
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 relative overflow-hidden p-4 flex items-center justify-center bg-gray-950/20">
             <svg
                 viewBox={frontViewBox}
                 className="w-full h-full drop-shadow-2xl"
@@ -192,83 +196,86 @@ const Visualizer: React.FC<VisualizerProps> = ({ config, cabinet, stats }) => {
 
       {/* Top View (Only if curved) */}
       {isCurved && topViewData && (
-          <div className="h-[45%] bg-gray-950/50 relative p-4 flex items-center justify-center">
-             <div className="absolute top-4 right-4 z-10 bg-gray-900/80 backdrop-blur px-3 py-1 rounded text-xs text-cyan-400 font-mono border border-cyan-900/30 shadow-sm">
-                VISTA SUPERIOR ({topViewData.isConcave ? 'CÔNCAVA' : 'CONVEXA'})
+          <div className="h-[45%] flex flex-col bg-gray-900">
+             {/* Header Bar for Top View */}
+             <div className="flex justify-between items-center px-4 py-2 bg-gray-900/50 border-b border-gray-800/50">
+                 <div className="flex gap-4 text-[10px] text-gray-500 font-mono">
+                    <div className="flex items-center gap-1"><div className="w-2 h-2 bg-cyan-500/20 border border-cyan-500 rounded-sm"></div> Face</div>
+                    <div className="flex items-center gap-1"><div className="w-2 h-2 bg-gray-800 border border-gray-600 rounded-sm"></div> Traseira</div>
+                 </div>
+                 <div className="bg-gray-800/80 px-2 py-0.5 rounded text-[10px] text-cyan-400 font-mono border border-cyan-900/30">
+                    VISTA SUPERIOR ({topViewData.isConcave ? 'CÔNCAVA' : 'CONVEXA'})
+                 </div>
              </div>
-             
-             {/* Legend */}
-             <div className="absolute bottom-4 left-4 z-10 flex gap-4 text-[10px] text-gray-500 font-mono">
-                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-cyan-500/20 border border-cyan-500 rounded-sm"></div> Face da Tela</div>
-                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-gray-800 border border-gray-600 rounded-sm"></div> Traseira</div>
-             </div>
 
-             <svg
-                viewBox={topViewData.viewBox}
-                className="w-full h-full"
-                preserveAspectRatio="xMidYMid meet"
-                style={{ overflow: 'visible' }}
-             >
-                <defs>
-                   <filter id="textGlow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#000" floodOpacity="1"/>
-                   </filter>
-                </defs>
-
-                {/* Center Axis Line */}
-                <line 
-                    x1="0" y1="-50000" x2="0" y2="50000" 
-                    stroke="#334155" 
-                    strokeDasharray="20,20" 
-                    strokeWidth="2" // Thinner axis line 
-                    vectorEffect="non-scaling-stroke"
-                />
-
-                {/* Draw Cabinets Top View */}
-                {topViewData.cabinets.map((pos, idx) => (
-                    <g key={idx} transform={`translate(${pos.x}, ${pos.y}) rotate(${pos.rotation})`}>
-                        {/* Cabinet Body */}
-                        <rect 
-                            x={-cabinet.widthMm/2} 
-                            y={-topViewData.cabDepth/2} 
-                            width={cabinet.widthMm} 
-                            height={topViewData.cabDepth} 
-                            fill="#1e293b" 
-                            stroke="#475569"
-                            strokeWidth={cabinet.widthMm * 0.005} // Proportional thin stroke (~2.5mm for 500mm cab)
-                        />
-                        
-                        {/* Screen Face Indicator */}
-                        <line 
-                            x1={-cabinet.widthMm/2} 
-                            y1={topViewData.isConcave ? -topViewData.cabDepth/2 : topViewData.cabDepth/2} 
-                            x2={cabinet.widthMm/2} 
-                            y2={topViewData.isConcave ? -topViewData.cabDepth/2 : topViewData.cabDepth/2} 
-                            stroke="#06b6d4" 
-                            strokeWidth={cabinet.widthMm * 0.02} // ~10mm for 500mm cab, visible but not huge
-                            strokeLinecap="round"
-                        />
-                        
-                        {/* Connector visual dots */}
-                        <circle cx={cabinet.widthMm/2} cy="0" r={cabinet.widthMm * 0.015} fill="#64748b" />
-                        <circle cx={-cabinet.widthMm/2} cy="0" r={cabinet.widthMm * 0.015} fill="#64748b" />
-                    </g>
-                ))}
-
-                {/* Radius/Info Text placed near the curve apex */}
-                 <text 
-                    x="0" 
-                    y={topViewData.isConcave ? (stats.curveRadiusMm! + (cabinet.widthMm * 0.8)) : (stats.curveRadiusMm! - (cabinet.widthMm * 0.8))} 
-                    textAnchor="middle" 
-                    fill="#fbbf24" 
-                    fontSize={cabinet.widthMm * 0.15} // Smaller font relative to cabinet
-                    className="font-mono font-bold"
-                    filter="url(#textGlow)"
-                    dominantBaseline="middle"
+             <div className="flex-1 relative p-4 flex items-center justify-center overflow-hidden">
+                <svg
+                    viewBox={topViewData.viewBox}
+                    className="w-full h-full"
+                    preserveAspectRatio="xMidYMid meet"
+                    style={{ overflow: 'visible' }}
                 >
-                    R = {(stats.curveRadiusMm! / 1000).toFixed(2)}m
-                </text>
-             </svg>
+                    <defs>
+                    <filter id="textGlow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#000" floodOpacity="1"/>
+                    </filter>
+                    </defs>
+
+                    {/* Center Axis Line */}
+                    <line 
+                        x1="0" y1="-50000" x2="0" y2="50000" 
+                        stroke="#334155" 
+                        strokeDasharray="20,20" 
+                        strokeWidth="2" // Thinner axis line 
+                        vectorEffect="non-scaling-stroke"
+                    />
+
+                    {/* Draw Cabinets Top View */}
+                    {topViewData.cabinets.map((pos, idx) => (
+                        <g key={idx} transform={`translate(${pos.x}, ${pos.y}) rotate(${pos.rotation})`}>
+                            {/* Cabinet Body */}
+                            <rect 
+                                x={-cabinet.widthMm/2} 
+                                y={-topViewData.cabDepth/2} 
+                                width={cabinet.widthMm} 
+                                height={topViewData.cabDepth} 
+                                fill="#1e293b" 
+                                stroke="#475569"
+                                strokeWidth={cabinet.widthMm * 0.005} // Proportional thin stroke (~2.5mm for 500mm cab)
+                            />
+                            
+                            {/* Screen Face Indicator */}
+                            <line 
+                                x1={-cabinet.widthMm/2} 
+                                y1={topViewData.isConcave ? -topViewData.cabDepth/2 : topViewData.cabDepth/2} 
+                                x2={cabinet.widthMm/2} 
+                                y2={topViewData.isConcave ? -topViewData.cabDepth/2 : topViewData.cabDepth/2} 
+                                stroke="#06b6d4" 
+                                strokeWidth={cabinet.widthMm * 0.02} // ~10mm for 500mm cab, visible but not huge
+                                strokeLinecap="round"
+                            />
+                            
+                            {/* Connector visual dots */}
+                            <circle cx={cabinet.widthMm/2} cy="0" r={cabinet.widthMm * 0.015} fill="#64748b" />
+                            <circle cx={-cabinet.widthMm/2} cy="0" r={cabinet.widthMm * 0.015} fill="#64748b" />
+                        </g>
+                    ))}
+
+                    {/* Radius/Info Text placed near the curve apex */}
+                    <text 
+                        x="0" 
+                        y={topViewData.isConcave ? (stats.curveRadiusMm! + (cabinet.widthMm * 0.8)) : (stats.curveRadiusMm! - (cabinet.widthMm * 0.8))} 
+                        textAnchor="middle" 
+                        fill="#fbbf24" 
+                        fontSize={cabinet.widthMm * 0.15} // Smaller font relative to cabinet
+                        className="font-mono font-bold"
+                        filter="url(#textGlow)"
+                        dominantBaseline="middle"
+                    >
+                        R = {(stats.curveRadiusMm! / 1000).toFixed(2)}m
+                    </text>
+                </svg>
+             </div>
           </div>
       )}
     </div>

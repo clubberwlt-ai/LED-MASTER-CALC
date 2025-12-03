@@ -138,9 +138,10 @@ const App: React.FC = () => {
                       min="1"
                       value={config.cols}
                       onChange={(e) => handleDimensionChange('cols', e.target.value)}
-                      className="w-full bg-gray-950 border border-gray-700 text-white font-mono rounded-lg p-2.5 pl-3 text-sm focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none"
+                      // Added pr-10 to prevent overlap with "pçs"
+                      className="w-full bg-gray-950 border border-gray-700 text-white font-mono rounded-lg p-2.5 pl-3 pr-10 text-sm focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none"
                     />
-                    <span className="absolute right-3 top-2.5 text-xs text-gray-600 font-mono">pçs</span>
+                    <span className="absolute right-3 top-2.5 text-xs text-gray-600 font-mono pointer-events-none">pçs</span>
                   </div>
                 </div>
                 <div>
@@ -151,9 +152,10 @@ const App: React.FC = () => {
                       min="1"
                       value={config.rows}
                       onChange={(e) => handleDimensionChange('rows', e.target.value)}
-                      className="w-full bg-gray-950 border border-gray-700 text-white font-mono rounded-lg p-2.5 pl-3 text-sm focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none"
+                      // Added pr-10 to prevent overlap with "pçs"
+                      className="w-full bg-gray-950 border border-gray-700 text-white font-mono rounded-lg p-2.5 pl-3 pr-10 text-sm focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none"
                     />
-                    <span className="absolute right-3 top-2.5 text-xs text-gray-600 font-mono">pçs</span>
+                    <span className="absolute right-3 top-2.5 text-xs text-gray-600 font-mono pointer-events-none">pçs</span>
                   </div>
                 </div>
               </div>
@@ -169,9 +171,10 @@ const App: React.FC = () => {
                       step="0.5"
                       value={config.curveAngle}
                       onChange={(e) => handleDimensionChange('curveAngle', e.target.value)}
-                      className={`w-full bg-gray-950 border text-white font-mono rounded-lg p-2.5 pl-3 text-sm focus:ring-2 focus:ring-cyan-500/50 outline-none ${config.curveAngle !== 0 ? 'border-cyan-500/50' : 'border-gray-700'}`}
+                      // Added pr-14 to prevent overlap with "graus"
+                      className={`w-full bg-gray-950 border text-white font-mono rounded-lg p-2.5 pl-3 pr-14 text-sm focus:ring-2 focus:ring-cyan-500/50 outline-none ${config.curveAngle !== 0 ? 'border-cyan-500/50' : 'border-gray-700'}`}
                     />
-                    <span className="absolute right-8 top-2.5 text-xs text-gray-600 font-mono">graus</span>
+                    <span className="absolute right-3 top-2.5 text-xs text-gray-600 font-mono pointer-events-none">graus</span>
                   </div>
                   <div className="flex justify-between text-[10px] text-gray-500 mt-1 px-1">
                       <span>Convexo (-)</span>
@@ -192,9 +195,10 @@ const App: React.FC = () => {
                       min="0"
                       value={config.spares}
                       onChange={(e) => handleDimensionChange('spares', e.target.value)}
-                      className="w-full bg-gray-950 border border-gray-700 text-white font-mono rounded-lg p-2.5 pl-3 text-sm focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none"
+                      // Added pr-10
+                      className="w-full bg-gray-950 border border-gray-700 text-white font-mono rounded-lg p-2.5 pl-3 pr-10 text-sm focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none"
                     />
-                    <span className="absolute right-3 top-2.5 text-xs text-gray-600 font-mono"><Box className="w-3 h-3 inline"/></span>
+                    <span className="absolute right-3 top-2.5 text-xs text-gray-600 font-mono pointer-events-none"><Box className="w-3 h-3 inline"/></span>
                   </div>
                 </div>
 
