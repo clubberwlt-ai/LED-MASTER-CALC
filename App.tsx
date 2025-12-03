@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
+import html2canvas from 'html2canvas';
 import { CABINETS } from './constants';
 import { WallConfig, WallStats, Tab } from './types';
 import Visualizer from './components/Visualizer';
 import InfoPanel from './components/InfoPanel';
-import AIAdvice from './components/AIAdvice';
-import { Layers, Settings2, BarChart3, Bot, ChevronRight, Box } from 'lucide-react';
+import { Layers, Settings2, BarChart3, ChevronRight, Box, Camera, Download, Loader2 } from 'lucide-react';
 
 const App: React.FC = () => {
   const [config, setConfig] = useState<WallConfig>({
@@ -16,6 +16,10 @@ const App: React.FC = () => {
   });
 
   const [activeTab, setActiveTab] = useState<Tab>(Tab.VISUALIZER);
+  const [isExporting, setIsExporting] = useState(false);
+  
+  // Ref for the element we want to capture (The main content area)
+  const exportRef = useRef<HTMLDivElement>(null);
 
   const selectedCabinet = useMemo(() => 
     CABINETS.find(c => c.id === config.cabinetId) || CABINETS[0], 
@@ -83,6 +87,37 @@ const App: React.FC = () => {
     }
   };
 
+  const handleExport = async () => {
+    if (!exportRef.current) return;
+    
+    setIsExporting(true);
+    
+    try {
+      // Add a small delay to ensure UI is ready/rendered if tabs just switched (optional safety)
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const canvas = await html2canvas(exportRef.current, {
+        scale: 2, // High resolution
+        backgroundColor: '#111827', // Matches bg-gray-900
+        logging: false,
+        useCORS: true, // Helps with loading external assets if any
+      });
+
+      const image = canvas.toDataURL('image/jpeg', 0.9);
+      const link = document.createElement('a');
+      const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+      
+      link.href = image;
+      link.download = `led-config-${config.cols}x${config.rows}-${timestamp}.jpg`;
+      link.click();
+    } catch (error) {
+      console.error("Erro ao exportar imagem:", error);
+      alert("Houve um erro ao gerar a imagem. Tente novamente.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-950 text-gray-200 flex flex-col font-sans selection:bg-cyan-500/30">
       {/* Header */}
@@ -96,8 +131,17 @@ const App: React.FC = () => {
               LED Master<span className="font-light text-cyan-400">Calc</span>
             </h1>
           </div>
-          <div className="flex items-center gap-4 text-xs font-mono text-gray-500">
-             <span>v1.2.0 (PT-BR)</span>
+          <div className="flex items-center gap-4">
+             <button 
+               onClick={handleExport}
+               disabled={isExporting}
+               className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-cyan-400 border border-cyan-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+               title="Salvar visualização atual como imagem"
+             >
+               {isExporting ? <Loader2 className="w-4 h-4 animate-spin"/> : <Camera className="w-4 h-4" />}
+               <span className="hidden sm:inline">Exportar JPG</span>
+             </button>
+             <span className="text-xs font-mono text-gray-500 hidden sm:inline">v1.2.0 (PT-BR)</span>
           </div>
         </div>
       </header>
@@ -215,22 +259,6 @@ const App: React.FC = () => {
               </div>
             </div>
           </div>
-
-          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl border border-gray-700 p-5 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Bot className="w-16 h-16 text-cyan-400" />
-            </div>
-            <h3 className="text-white font-semibold mb-2 relative z-10">Engenheiro IA</h3>
-            <p className="text-sm text-gray-400 mb-4 relative z-10">
-                Pergunte sobre energia, sinal ou requisitos para setups curvos.
-            </p>
-            <button 
-                onClick={() => setActiveTab(Tab.AI_ASSISTANT)}
-                className="w-full bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-400 border border-cyan-500/30 rounded-lg py-2 px-4 text-sm font-medium transition-all flex items-center justify-center gap-2 relative z-10"
-            >
-                Perguntar IA <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
         </div>
 
         {/* Center/Right: Visualizer & Data */}
@@ -250,16 +278,13 @@ const App: React.FC = () => {
             >
               <BarChart3 className="w-4 h-4" /> Dados & Mapeamento
             </button>
-            <button
-              onClick={() => setActiveTab(Tab.AI_ASSISTANT)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === Tab.AI_ASSISTANT ? 'bg-gray-800 text-white shadow-sm' : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/50'}`}
-            >
-              <Bot className="w-4 h-4" /> Assistente IA
-            </button>
           </div>
 
-          {/* Content Area */}
-          <div className="flex-1 bg-gray-900 rounded-xl border border-gray-800 overflow-hidden relative shadow-2xl min-h-[600px]">
+          {/* Content Area - Ref attached here for export */}
+          <div 
+            ref={exportRef}
+            className="flex-1 bg-gray-900 rounded-xl border border-gray-800 overflow-hidden relative shadow-2xl min-h-[600px]"
+          >
              {activeTab === Tab.VISUALIZER && (
                 <Visualizer config={config} cabinet={selectedCabinet} stats={stats} />
              )}
@@ -267,9 +292,6 @@ const App: React.FC = () => {
                 <div className="p-6 h-full overflow-y-auto custom-scrollbar">
                     <InfoPanel stats={stats} />
                 </div>
-             )}
-             {activeTab === Tab.AI_ASSISTANT && (
-                <AIAdvice stats={stats} cabinet={selectedCabinet} />
              )}
           </div>
         </div>
