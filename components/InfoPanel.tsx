@@ -109,7 +109,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ stats }) => {
             ) : (
                 <div className="h-32 flex flex-col items-center justify-center text-gray-500 border border-dashed border-gray-800 rounded-lg">
                     <span className="text-sm">Configuração Plana Padrão</span>
-                    <span className="text-xs mt-1">Defina um ângulo > 0 para ver dados de curvatura</span>
+                    <span className="text-xs mt-1">Defina um ângulo &gt; 0 para ver dados de curvatura</span>
                 </div>
             )}
           </div>
