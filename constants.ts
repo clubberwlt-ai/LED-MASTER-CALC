@@ -1,0 +1,117 @@
+import { Cabinet, Processor } from './types';
+
+export const CABINETS: Cabinet[] = [
+  {
+    id: 'p1.9-500',
+    brand: 'Genérico',
+    model: 'Indoor P1.9',
+    pitch: 1.95,
+    widthMm: 500,
+    heightMm: 500,
+    pixelsW: 256,
+    pixelsH: 256,
+    weightKg: 7.5,
+    maxPowerW: 150,
+    avgPowerW: 50,
+  },
+  {
+    id: 'p2.6-500',
+    brand: 'Genérico',
+    model: 'Indoor P2.6',
+    pitch: 2.604,
+    widthMm: 500,
+    heightMm: 500,
+    pixelsW: 192,
+    pixelsH: 192,
+    weightKg: 7.0,
+    maxPowerW: 140,
+    avgPowerW: 45,
+  },
+  {
+    id: 'p2.9-500',
+    brand: 'Genérico',
+    model: 'Indoor/Outdoor P2.9',
+    pitch: 2.97,
+    widthMm: 500,
+    heightMm: 500,
+    pixelsW: 168,
+    pixelsH: 168,
+    weightKg: 8.5,
+    maxPowerW: 180,
+    avgPowerW: 60,
+  },
+  {
+    id: 'p3.9-500x1000',
+    brand: 'Genérico',
+    model: 'Outdoor P3.9 (1m)',
+    pitch: 3.91,
+    widthMm: 500,
+    heightMm: 1000,
+    pixelsW: 128,
+    pixelsH: 256,
+    weightKg: 13,
+    maxPowerW: 250,
+    avgPowerW: 85,
+  },
+  {
+    id: 'p3.9-500',
+    brand: 'Genérico',
+    model: 'Outdoor P3.9 (0.5m)',
+    pitch: 3.91,
+    widthMm: 500,
+    heightMm: 500,
+    pixelsW: 128,
+    pixelsH: 128,
+    weightKg: 7.5,
+    maxPowerW: 125,
+    avgPowerW: 42,
+  },
+  {
+    id: 'p4.8-500x1000',
+    brand: 'Genérico',
+    model: 'Outdoor P4.8 (1m)',
+    pitch: 4.81,
+    widthMm: 500,
+    heightMm: 1000,
+    pixelsW: 104,
+    pixelsH: 208,
+    weightKg: 12.5,
+    maxPowerW: 240,
+    avgPowerW: 80,
+  }
+];
+
+export const PROCESSORS: Processor[] = [
+  {
+    id: 'novastar-mctrl4k',
+    name: 'MCTRL4K',
+    brand: 'Novastar',
+    maxPixels: 8800000, // Approx 4k @ 60hz
+    maxWidth: 7680,
+    maxHeight: 7680,
+  },
+  {
+    id: 'novastar-vx1000',
+    name: 'VX1000',
+    brand: 'Novastar',
+    maxPixels: 6500000, 
+    maxWidth: 10240,
+    maxHeight: 8192,
+  },
+  {
+    id: 'brompton-sx40',
+    name: 'Tessera SX40',
+    brand: 'Brompton',
+    maxPixels: 9000000, // Flexible 4K
+    maxWidth: 4096, // Depends on bit depth/Hz, simplified for demo
+    maxHeight: 4096,
+  },
+  {
+    id: 'colorlight-z6',
+    name: 'Z6 Super Controller',
+    brand: 'Colorlight',
+    maxPixels: 3900000,
+    maxWidth: 8192,
+    maxHeight: 4096,
+  }
+];

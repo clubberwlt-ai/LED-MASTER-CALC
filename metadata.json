@@ -1,0 +1,5 @@
+{
+  "name": "LED Master Calc",
+  "description": "A professional LED video wall configuration calculator with pixel mapping, power estimation, processor validation, and AI-assisted technical advice.",
+  "requestFramePermissions": []
+}
